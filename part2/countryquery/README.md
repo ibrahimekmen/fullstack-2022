@@ -4,10 +4,6 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 You need REACT_APP_API_KEY for weather api in start up
 
-REACT_APP_API_KEY=t0p53cr3t4p1k3yv4lu3 npm start // For Linux/macOS Bash
-($env:REACT_APP_API_KEY="t0p53cr3t4p1k3yv4lu3") -and (npm start) // For Windows PowerShell
-set "REACT_APP_API_KEY=t0p53cr3t4p1k3yv4lu3" && npm start // For Windows cmd.exe
-
 ## Available Scripts
 
 In the project directory, you can run:
