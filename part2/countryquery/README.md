@@ -2,6 +2,8 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+You need REACT_APP_API_KEY for weather api in start up
+
 ## Available Scripts
 
 In the project directory, you can run:
