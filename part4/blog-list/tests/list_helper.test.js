@@ -119,7 +119,7 @@ const blogsWithTwoMaxAuthors = [
       title: "TDD harms architecture",
       author: "Robert C. Martin",
       url: "http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html",
-      likes: 0,
+      likes: 17,
       __v: 0
     },
     {
@@ -152,15 +152,33 @@ describe('mostBlogs', () => {
         expect(listHelper.mostBlogs([])).toBe(null)
     })
 
-    test('when list has one item it that author is the answer', () => {
+    test('when list has one item its author is the answer', () => {
         expect(listHelper.mostBlogs([blogs[0]])).toEqual([{author: blogs[0].author, blogs: 1}])
     })
 
-    test('when list has one author with max blogs it returns that author with the number of blogs', () => {
+    test('when list has one author with most blogs it returns that author with the number of blogs', () => {
         expect(listHelper.mostBlogs(blogs)).toEqual([{ author: 'Robert C. Martin', blogs: 3 }])
     })
 
-    test('when list has more than one author with max blogs it returns multiple author with the same number of blogs' , () => {
+    test('when list has more than one author with most blogs it returns multiple authors with the same number of blogs' , () => {
         expect(listHelper.mostBlogs(blogsWithTwoMaxAuthors)).toEqual([{ author: 'Edsger W. Dijkstra', blogs: 3 },{ author: 'Robert C. Martin', blogs: 3 }])
+    })
+})
+
+describe('mostLikes', () => { 
+    test('empty list', () => {
+        expect(listHelper.mostLikes([])).toBe(null)
+    })
+
+    test('when list has one item its author is the answer', () => {
+        expect(listHelper.mostLikes([blogs[0]])).toEqual([{author: blogs[0].author, likes: 7}])
+    })
+
+    test('when list has one author with most likes it returns that author with the number of blogs', () => {
+        expect(listHelper.mostLikes(blogs)).toEqual([{ author: 'Edsger W. Dijkstra', likes: 17 }])
+    })
+
+    test('when list has more than one author with most likes it returns multiple authors with the same number of likes' , () => {
+        expect(listHelper.mostLikes(blogsWithTwoMaxAuthors)).toEqual([{ author: 'Edsger W. Dijkstra', likes: 29 },{ author: 'Robert C. Martin', likes: 29 }])
     })
 })

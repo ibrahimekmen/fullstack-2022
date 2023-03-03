@@ -30,84 +30,58 @@ const mostBlogs = (blogs) => {
         return null
     }
     
-    let authorCount = {}
+    let authorBlogCount = {}
     blogs.forEach(blog => {
-        if(authorCount[blog.author]){
-            authorCount[blog.author]++
+        if(authorBlogCount[blog.author]){
+            authorBlogCount[blog.author]++
         }else{
-            authorCount[blog.author] = 1
+            authorBlogCount[blog.author] = 1
         }
-    });
+    })
     
-    const blogCounts = Object.values(authorCount) // 1,2,3
+    const blogCounts = Object.values(authorBlogCount) // 1,2,3
     const maxBlogCount = Math.max(...blogCounts) // 3
-    const authors = Object.keys(authorCount) // chan, dijkstra, martin
-    const maxAuthor = authors.filter(author => authorCount[author] === maxBlogCount)
-    let result = Array(maxAuthor.length)
-    maxAuthor.forEach((author,i) => {
+    const authors = Object.keys(authorBlogCount) // chan, dijkstra, martin
+    const maxAuthors = authors.filter(author => authorBlogCount[author] === maxBlogCount)
+    let result = Array(maxAuthors.length)
+    maxAuthors.forEach((author,i) => {
         result[i] = {author: author, blogs: maxBlogCount}
     })
     
     return result
 }
 
-const blogs = [
-    {
-      _id: "5a422a851b54a676234d17f7",
-      title: "React patterns",
-      author: "Michael Chan",
-      url: "https://reactpatterns.com/",
-      likes: 7,
-      __v: 0
-    },
-    {
-      _id: "5a422aa71b54a676234d17f8",
-      title: "Go To Statement Considered Harmful",
-      author: "Edsger W. Dijkstra",
-      url: "http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html",
-      likes: 5,
-      __v: 0
-    },
-    {
-      _id: "5a422b3a1b54a676234d17f9",
-      title: "Canonical string reduction",
-      author: "Edsger W. Dijkstra",
-      url: "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
-      likes: 12,
-      __v: 0
-    },
-    {
-      _id: "5a422b891b54a676234d17fa",
-      title: "First class tests",
-      author: "Robert C. Martin",
-      url: "http://blog.cleancoder.com/uncle-bob/2017/05/05/TestDefinitions.htmll",
-      likes: 10,
-      __v: 0
-    },
-    {
-      _id: "5a422ba71b54a676234d17fb",
-      title: "TDD harms architecture",
-      author: "Robert C. Martin",
-      url: "http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html",
-      likes: 0,
-      __v: 0
-    },
-    {
-      _id: "5a422bc61b54a676234d17fc",
-      title: "Type wars",
-      author: "Robert C. Martin",
-      url: "http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html",
-      likes: 2,
-      __v: 0
-    }  
-]
+const mostLikes = (blogs) => {
+    if(blogs.length === 0){
+        return null
+    }
 
-console.log(mostBlogs(blogs)) 
+    let authorLikeCount = {}
+    blogs.forEach(blog => {
+        if(authorLikeCount[blog.author]){
+            authorLikeCount[blog.author] += blog.likes
+        }else{
+            authorLikeCount[blog.author] = blog.likes
+        }
+    })
+
+    const likeCounts = Object.values(authorLikeCount)
+    const maxLike = Math.max(...likeCounts)
+    const authors = Object.keys(authorLikeCount)
+    const maxAuthors = authors.filter(author => authorLikeCount[author] === maxLike)
+    let result = Array(maxAuthors.length)
+    maxAuthors.forEach((author, i)=> {
+        result[i] = {author: author, likes: maxLike}
+    })
+
+    return result
+}
 
 module.exports = {
     dummy,
     totalLikes,
     favoriteBlog,
-    mostBlogs
+    mostBlogs,
+    mostLikes
 }
   
