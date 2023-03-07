@@ -9,9 +9,8 @@ const User = require('../models/user')
 describe('when there is initially one user in db', () => {
     beforeEach(async () => {
         await User.deleteMany({})
-        const passwordHash = await bcrypt.hash('sekret', 10)
-        const user = new User({username: 'Root', passwordHash})
-
+        const passwordHash = await bcrypt.hash(helper.initialUser.password, 10)
+        const user = new User({username: helper.initialUser.username, passwordHash})
         await user.save()
     })
 
