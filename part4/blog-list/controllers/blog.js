@@ -3,13 +3,14 @@ const jwt = require('jsonwebtoken')
 const Blog = require('../models/blog')
 const User = require('../models/user')
 const logger = require('../utils/logger')
+const userExtractor = require('../utils/middleware').userExtractor
 
-blogRouter.get('/', async(request, response) => {   
+blogRouter.get('/', async (request, response) => {   
     const blogs = await Blog.find({}).populate("user", {username: 1, name: 1})
     response.json(blogs)
 })
 
-blogRouter.get('/:id', async(request, response) => {   
+blogRouter.get('/:id', async (request, response) => {   
     const id = request.params.id
     const blog = await Blog.findById(id)
     if(blog){
@@ -19,20 +20,15 @@ blogRouter.get('/:id', async(request, response) => {
     }
 })
 
-blogRouter.post('/', async(request, response) => {
+blogRouter.post('/', userExtractor, async (request, response) => {
     const body = request.body
-    const decodedToken = jwt.verify(request.token, process.env.SECRET)
-    if(!decodedToken.id){
-        return response.status(401).json({error: 'token invalid'})
-    }
-
-    const user = await User.findById(decodedToken.id)
+    const user = request.user
     if(!body.title || !body.url){
         response.status(400).send('Bad Request')
     }else{
         const blog = new Blog({
             title: body.title,
-            author: body.author,
+            author: user.name,
             url: body.url,
             likes: body.likes || 0,
             user: user.id
@@ -45,7 +41,7 @@ blogRouter.post('/', async(request, response) => {
     }    
 })
 
-blogRouter.put('/:id', async(request, response) => {
+blogRouter.put('/:id', async (request, response) => {
     const id = request.params.id
     const body = request.body
     if(!body.title || !body.url){
@@ -62,13 +58,8 @@ blogRouter.put('/:id', async(request, response) => {
     }
 })
 
-blogRouter.delete('/:id', async(request, response) => {
-    const decodedToken = jwt.verify(request.token, process.env.SECRET)
-    if(!decodedToken.id){
-        return response.status(401).json({error: 'token invalid'})
-    }
-    
-    const userRemoving = await User.findById(decodedToken.id)
+blogRouter.delete('/:id', userExtractor, async (request, response) => {    
+    const user = request.user
     const id = request.params.id
     const blogToRemove = await Blog.findById(id)
 
@@ -76,14 +67,14 @@ blogRouter.delete('/:id', async(request, response) => {
         return response.status(404).send('Not Found')
     }
 
-    if(blogToRemove.user.toString() !== userRemoving.id.toString()){
+    if(blogToRemove.user.toString() !== user.id.toString()){
         return response.status(401).json({error: 'unauthorized to remove this post'})
     }
     
     // deleting the blog from the user's blogs
-    const blogToRemoveId = userRemoving.blogs.indexOf(id)
-    userRemoving.blogs.splice(blogToRemoveId, 1)
-    await userRemoving.save()
+    const blogToRemoveId = user.blogs.indexOf(id)
+    user.blogs.splice(blogToRemoveId, 1)
+    await user.save()
 
     const responseMongoDb = await Blog.findByIdAndRemove(id)
     if(responseMongoDb){
