@@ -63,7 +63,28 @@ blogRouter.put('/:id', async(request, response) => {
 })
 
 blogRouter.delete('/:id', async(request, response) => {
+    const decodedToken = jwt.verify(request.token, process.env.SECRET)
+    if(!decodedToken.id){
+        return response.status(401).json({error: 'token invalid'})
+    }
+    
+    const userRemoving = await User.findById(decodedToken.id)
     const id = request.params.id
+    const blogToRemove = await Blog.findById(id)
+
+    if(!blogToRemove){
+        return response.status(404).send('Not Found')
+    }
+
+    if(blogToRemove.user.toString() !== userRemoving.id.toString()){
+        return response.status(401).json({error: 'unauthorized to remove this post'})
+    }
+    
+    // deleting the blog from the user's blogs
+    const blogToRemoveId = userRemoving.blogs.indexOf(id)
+    userRemoving.blogs.splice(blogToRemoveId, 1)
+    await userRemoving.save()
+
     const responseMongoDb = await Blog.findByIdAndRemove(id)
     if(responseMongoDb){
         response.status(204).end()
