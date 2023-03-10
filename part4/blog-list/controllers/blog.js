@@ -23,12 +23,14 @@ blogRouter.get('/:id', async (request, response) => {
 blogRouter.post('/', userExtractor, async (request, response) => {
     const body = request.body
     const user = request.user
+    
+    logger.info(`${user.username} is trying to add new blog ${body.title}` )
     if(!body.title || !body.url){
         response.status(400).send('Bad Request')
     }else{
         const blog = new Blog({
             title: body.title,
-            author: user.name,
+            author: body.author || user.name,
             url: body.url,
             likes: body.likes || 0,
             user: user.id
