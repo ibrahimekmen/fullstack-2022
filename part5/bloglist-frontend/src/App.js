@@ -3,6 +3,10 @@ import Blog from './components/Blog'
 import Notification from './components/Notification'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import LoginForm from './components/LoginForm'
+import Togglable from './components/Togglable'
+import BlogForm from './components/BlogForm'
+
 
 const App = () => {
     const [blogs, setBlogs] = useState([])
@@ -10,8 +14,9 @@ const App = () => {
     const [password, setPassword] = useState('')
     const [user, setUser] = useState(null)
     const [errorMessage, setErrorMessage] = useState(null)
-
-    
+    const [title, setTitle] = useState('')
+    const [author, setAuthor] = useState('')
+    const [url, setUrl] = useState('')
 
     useEffect(() => {
         const loggedUser = window.localStorage.getItem('loggedUser')
@@ -31,6 +36,7 @@ const App = () => {
                 username,
                 password
             })
+            blogService.setToken(user.token)
             setUser(user)
             setUsername('')
             setPassword('')
@@ -42,7 +48,34 @@ const App = () => {
                 setErrorMessage(null)
             }, 5000)
         }
+
         console.log('logging in with', username, password)
+    }
+
+    const handleNewBlog = async (event) => {
+        event.preventDefault()
+        try{
+            const response = await blogService.createBlog({
+                title,
+                url, 
+                password
+            })
+            const newBlogs = blogs.concat(response)
+            setBlogs(newBlogs)
+            setErrorMessage(`a new blog ${title} by ${author} added`)
+            setTimeout(() => {
+                setErrorMessage(null)
+            }, 5000)
+            setUrl('')
+            setTitle('')
+            setAuthor('')
+            console.log(response)
+        } catch{
+            console.log('error from new blog')
+            setUrl('')
+            setTitle('')
+            setAuthor('')
+        }
     }
 
     const handleLogout = () => {
@@ -50,34 +83,38 @@ const App = () => {
         setUser(null)
     }
 
-    if (user === null){
-        return (
-            <div>
-                <Notification message={errorMessage}/>
-                <form onSubmit={handleLogin}>
-                    <div>
-                        username
-                        <input type="text" value={username} name="Username" onChange={({target}) => setUsername(target.value)} />
-                    </div>
-                    <div>
-                        password
-                        <input type="password" value={password} name="Password" onChange={({target}) => setPassword(target.value)}/>
-                    </div>
-                    <button type="submit">login</button>
-                </form>
-            </div>
-        )
-    }
-
     return (
         <div>
-            <h2>blogs</h2>
-            <p>{user.name} logged in</p> <button onClick={handleLogout}>log out</button>
-            {blogs.map(blog =>
-                <Blog key={blog.id} blog={blog} />
-            )}
-        </div> 
-        
+            <h1>blogs</h1>
+            <Notification message={errorMessage}/>
+            {!user && 
+                <Togglable buttonLabel="Log In">
+                    <LoginForm
+                        username={username}
+                        password={password}
+                        handleUsernameChange={({target}) => setUsername(target.value)}
+                        handlePasswordChange={({target}) => setPassword(target.value)}
+                        handleLogin={handleLogin}
+                    />
+                </Togglable>
+            }
+
+            {user &&
+                <div>
+                    <p>{user.name} logged in <button onClick={handleLogout}>log out</button></p>
+                    <Togglable buttonLabel="new blog">
+                        <BlogForm 
+                            onSubmit={handleNewBlog} title={title} author={author} url={url}  
+                            handleTitleChange={({target}) => setTitle(target.value)} 
+                            handleAuthorChange={({target}) => setAuthor(target.value)}
+                            handleUrlChange={({target}) => setUrl(target.value)}/>
+                    </Togglable>
+                    {blogs.map(blog => 
+                        <Blog key={blog.id} blog={blog} />
+                    )}
+                </div>
+            }
+        </div>
     )
 }
 
