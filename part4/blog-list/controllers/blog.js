@@ -43,20 +43,42 @@ blogRouter.post('/', userExtractor, async (request, response) => {
     }    
 })
 
-blogRouter.put('/:id', async (request, response) => {
+blogRouter.put('/:id', userExtractor, async (request, response) => {
     const id = request.params.id
+    const blogToChange = await Blog.findById(id)
+
+    if(!blogToChange){
+        return response.status(404).send('Not Found')
+    }
+
+    const user = request.user
+
+    if(blogToChange.user.toString() !== user.id.toString()){
+        return response.status(401).json({error: 'unauthorized to remove this post'})
+    }
+
     const body = request.body
-    if(!body.title || !body.url){
+    logger.info(`${user.username} is trying to change the blog ${body.title}`)
+    if(!body.title || !body.url || !body.author || (typeof body.likes === "undefined") || !body.usersLiked){
         response.status(400).send('Bad Request')
     }else{
+        if(body.usersLiked.includes(user.id.toString())){
+            const blogToBeRemovedIndex = body.usersLiked.indexOf(user.id.toString())
+            body.usersLiked.splice(blogToBeRemovedIndex, 1)
+            body.likes -= 1
+        }else{
+            body.usersLiked.push(user.id.toString())
+            body.likes += 1
+        }
         const blog = {
             title: body.title,
             author: body.author,
             url: body.url,
-            likes: body.likes || 0
+            likes: body.likes,
+            usersLiked: body.usersLiked
         }
         const updatedBlog = await Blog.findOneAndUpdate({ _id: id }, blog, {new: true})
-        response.status(204).json(updatedBlog)
+        response.status(200).json(updatedBlog)
     }
 })
 
@@ -74,8 +96,8 @@ blogRouter.delete('/:id', userExtractor, async (request, response) => {
     }
     
     // deleting the blog from the user's blogs
-    const blogToRemoveId = user.blogs.indexOf(id)
-    user.blogs.splice(blogToRemoveId, 1)
+    const blogToRemoveIndex = user.blogs.indexOf(id)
+    user.blogs.splice(blogToRemoveIndex, 1)
     await user.save()
 
     const responseMongoDb = await Blog.findByIdAndRemove(id)
