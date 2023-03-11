@@ -29,7 +29,7 @@ const likeBlog = async (likedBlog) => {
             Authorization: token
         }
     }
-    
+
     const response = await axios.put(`${baseUrl}/${likedBlog.id}`, likedBlog, config)
     console.log('response data from put request inside blogservicejs', response.data)
     return response.data
@@ -45,5 +45,4 @@ const removeBlog = async (blogToRemove) => {
     return response
 }
 
-// eslint-disable-next-line import/no-anonymous-default-export
 export default { getAll, createBlog, likeBlog, removeBlog, setToken }

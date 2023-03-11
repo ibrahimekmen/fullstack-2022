@@ -22,7 +22,7 @@ const App = () => {
         }else if(a.likes > b.likes){
             return -1
         }
-        return 0    
+        return 0
     }
 
     const sortBlogs = (blogsToSort) => {
@@ -35,7 +35,7 @@ const App = () => {
         if(loggedUser){
             const user = JSON.parse(loggedUser)
             setUser(user)
-            blogService.getAll().then(blogs =>{
+            blogService.getAll().then(blogs => {
                 const sortedBlogs = [...blogs].sort(blogComparator)
                 setBlogs(sortedBlogs)
             })
@@ -48,8 +48,8 @@ const App = () => {
             blogService.setToken(user.token)
             setUser(user)
             window.localStorage.setItem('loggedUser', JSON.stringify(user))
-
-        } catch{
+        }catch (e) {
+            console.log(e)
             setMessage('Wrong credentials')
             setError(true)
             setTimeout(() => {
@@ -65,7 +65,7 @@ const App = () => {
     }
 
     const addBlog = async (blogObject) => {
-        console.log("blog to be added", blogObject)
+        console.log('blog to be added', blogObject)
         try{
             const token = JSON.parse(window.localStorage.getItem('loggedUser')).token
             blogService.setToken(token)
@@ -79,8 +79,9 @@ const App = () => {
                 setMessage(null)
                 setError(null)
             }, 5000)
-            console.log("addBlog response ", response)
-        } catch{
+            console.log('addBlog response', response)
+        } catch (e) {
+            console.log(e)
             console.log('error from new blog')
         }
     }
@@ -106,7 +107,7 @@ const App = () => {
         <div>
             <h1>blogs</h1>
             <Notification message={message} error={error}/>
-            {!user && 
+            {!user &&
                 <Togglable buttonLabel="Log In">
                     <LoginForm handleLogin={handleLogin}/>
                 </Togglable>
@@ -118,7 +119,7 @@ const App = () => {
                     <Togglable buttonLabel="new blog" ref={blogFormRef}>
                         <BlogForm createBlog={addBlog}/>
                     </Togglable>
-                    {blogs.map(blog => 
+                    {blogs.map(blog =>
                         <Blog key={blog.id} blog={blog} name={user.name} likeBlog={handleLikeBlog} removeBlog={handleRemoveBlog}/>
                     )}
                 </div>

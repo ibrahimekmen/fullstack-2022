@@ -1,4 +1,4 @@
-const Notification = ({message, error}) => {
+const Notification = ({ message, error }) => {
     if (message === null){
         return null
     }
@@ -16,7 +16,6 @@ const Notification = ({message, error}) => {
             {message}
         </div>
     )
-    
 }
 
 export default Notification
