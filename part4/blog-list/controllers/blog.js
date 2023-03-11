@@ -52,13 +52,9 @@ blogRouter.put('/:id', userExtractor, async (request, response) => {
     }
 
     const user = request.user
-
-    if(blogToChange.user.toString() !== user.id.toString()){
-        return response.status(401).json({error: 'unauthorized to remove this post'})
-    }
-
     const body = request.body
     logger.info(`${user.username} is trying to change the blog ${body.title}`)
+    
     if(!body.title || !body.url || !body.author || (typeof body.likes === "undefined") || !body.usersLiked){
         response.status(400).send('Bad Request')
     }else{
