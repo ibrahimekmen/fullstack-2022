@@ -35,7 +35,7 @@ const Blog = ({ blog, user, likeBlog, removeBlog }) => {
     const showWhenVisible = { display: visible ? '' : 'none' }
 
     return (
-        <div style={blogStyle} className='blogTest'>
+        <div style={blogStyle} className='blog'>
             {blog.title} {blog.author} <button onClick={toggleShow}>{visible ? 'hide' : 'view'}</button>
             <div style={showWhenVisible} className='notShown'>
                 {blog.url}

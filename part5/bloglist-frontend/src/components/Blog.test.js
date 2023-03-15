@@ -32,7 +32,7 @@ describe('<Blog />', () => {
     })
 
     test('renders content', () => {
-        const element = container.querySelector('.blogTest')
+        const element = container.querySelector('.blog')
         expect(element).toBeDefined()
         expect(element).toHaveTextContent('Component testing is done with react-testing-library')
     })
