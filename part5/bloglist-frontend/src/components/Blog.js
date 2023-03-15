@@ -1,10 +1,9 @@
 import { useState } from 'react'
-const Blog = ({ blog, name, likeBlog, removeBlog }) => {
+const Blog = ({ blog, user, likeBlog, removeBlog }) => {
     const [visible, setVisible] = useState(false)
 
     let removeButtonVisible = false
 
-    const user = JSON.parse(window.localStorage.getItem('loggedUser'))
     if(user.id === blog.user.id){
         removeButtonVisible = true
     }
@@ -36,14 +35,14 @@ const Blog = ({ blog, name, likeBlog, removeBlog }) => {
     const showWhenVisible = { display: visible ? '' : 'none' }
 
     return (
-        <div style={blogStyle}>
+        <div style={blogStyle} className='blogTest'>
             {blog.title} {blog.author} <button onClick={toggleShow}>{visible ? 'hide' : 'view'}</button>
-            <div style={showWhenVisible}>
+            <div style={showWhenVisible} className='notShown'>
                 {blog.url}
                 <br/>
                 likes {blog.likes} <button onClick={likeBlogEvent}>like</button>
                 <br/>
-                {name}
+                {user.name}
                 <button style={{ display: removeButtonVisible ? '' : 'none' }} onClick={removeBlogEvent}>remove</button>
             </div>
         </div>
