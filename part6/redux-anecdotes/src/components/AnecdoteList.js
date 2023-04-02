@@ -23,7 +23,21 @@ const AnecdoteList = () => {
                 id: id
             }
         })
-        console.log('vote', id)
+        dispatch({
+            type: 'notification/addNotification',
+            payload: {
+                content: `you voted '${anecdotes.find(anecdote => anecdote.id === id).content}'`,
+                id: id
+            }
+        })
+        setTimeout(()=> {
+            dispatch({
+                type: 'notification/removeNotification',
+                payload: {
+                    id: id
+                }
+            })
+        }, 5000)
     }
 
     return (
