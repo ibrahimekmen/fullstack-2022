@@ -2,7 +2,6 @@ import { useSelector, useDispatch } from 'react-redux'
 
 const AnecdoteList = () => {
     let anecdotes = useSelector(state => {
-        console.log('anecdote state', state.anecdotes)
         if (state.filter === ''){
             return state.anecdotes
         }else {
